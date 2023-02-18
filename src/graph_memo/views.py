@@ -17,9 +17,11 @@ def define_graph(request):
             }
     if request.method == 'POST':
             print("success")
-            nodes_data = json.loads(request.body)
-            print(nodes_data)
-            return render(request,"graph_memo/graph_memo.html", {'data_json': json.dumps(nodes_data)})
+            posted_data = json.loads(request.body)
+            print("node data: {}".format(posted_data["nodes"]))
+            print()
+            print("edges data: {}".format(posted_data["edges"]))
+            return render(request,"graph_memo/graph_memo.html", {'data_json': json.dumps(posted_data)})
             
     return render(request,"graph_memo/graph_memo.html", {'data_json': json.dumps(data)})
 
