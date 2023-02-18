@@ -1,6 +1,7 @@
 # vismem
-This is graph memorize tool
+This is graph memorize tool.
 you can create network graph for memoring relation objects each other.
+
 like this:
 ![image](https://user-images.githubusercontent.com/100256521/219835376-460beaf9-6ab6-4e5b-a113-f3bd8116fcc5.png)
 
