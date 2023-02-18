@@ -7,7 +7,7 @@ like this:
 click "save_button":
 ![image](https://user-images.githubusercontent.com/100256521/219837075-4aefea08-24c7-4bc7-87af-14f64051f3e2.png)
 
-this is graph data
+this is graph data(on src/graph_memo/views.py)
 
 ## download
 
