@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ja">
+      <head>
+        <title>Network</title>
+        
+        <script
+          type="text/javascript"
+          src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+        ></script>
+            
+            <link rel="stylesheet" href="{% static 'css/graph.css' %}">
+      </head>
+      
+      <body onload="draw();">
+        <div id="network-popUp">
+            <span id="operation">node</span>
+            <br>
+            
+            <table style="margin:auto;">
+
+                <tr>
+                    <td>id</td><td><input id="node-id" value="new value" /></td>
+                </tr>
+                <tr>
+                    <td>label</td><td><input id="node-label" /></td>
+                </tr>  
+            </table>
+            <input type="button" value="save" id="saveButton" />
+            <input type="button" value="cancel" id="cancelButton" /> 
+        </div>
+        <br>
+        
+        {% block content %}
+            <input type="button" id="save_graph" value="save_graph"/>
+            <div id="ajax-connecting-result" style="margin-bottom: 2em;"></div>
+        {% endblock %}
+
+        <div id="mynetwork"></div>
+
+     </body>
+     <script>
+        const django_csrf_token = '{% csrf_token %}';
+        let token = django_csrf_token.split('=');// 文字列を’＝’を基準に分離
+        let csrf_token = token[3].slice(1).slice(0,-2);//'" ...  ">'が必ず与えられるから" ... "の文字列の形にする
+
+        let graph_data = JSON.parse('{{data_json | safe}}');// django側から送信されたデータをjson形式に直す
+
+        const save_to_django = document.getElementById("save_graph");//inputのtypeがボタンの属性
+        save_to_django.addEventListener("click",function (){
+
+        var xhr = new XMLHttpRequest();
+        let connecting_result = document.getElementById('ajax-connecting-result');//ステータス状況の文字を表示するために宣言
+        
+        const json_string = JSON.stringify(graph_data);
+
+        xhr.open('POST', "{% url 'graph_memo:define_graph' %}" , true);
+        xhr.setRequestHeader('X-CSRFToken', csrf_token);
+
+        xhr.send(json_string);
+        connecting_result.innerText = "保存しました。";
+}, false);
+
+
+
+
+        //これより下はグラフの設定。上と関係する変数は、サーバに値を格納するgraph_data
+        //この変数にグラフの情報をpushする
+
+        var network = null;
+        // below nodes and edges may change code from back end site
+        let nodes = new vis.DataSet(graph_data.nodes);
+
+        let edges = new vis.DataSet(graph_data.edges);
+
+        // create a network
+        let data = {
+            nodes: nodes,
+            edges: edges
+        };
+
+
+        function destroy() {
+            if (network !== null) {
+                network.destroy();
+                network = null;
+            }
+        }
+
+        function draw() {
+
+            destroy();
+            nodes = [];
+            edges = [];
+            // create a network
+            let container = document.getElementById('mynetwork');
+            let options = {
+                manipulation: {
+                    addNode: function (data, callback) {
+                        // filling in the popup DOM elements
+                        document.getElementById('operation').innerHTML = "Add Node";
+                        document.getElementById('node-id').value = data.id;
+                        document.getElementById('node-label').value = data.label;
+                        document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
+                        document.getElementById('cancelButton').onclick = clearPopUp.bind();
+                        document.getElementById('network-popUp').style.display = 'block';
+                    },
+                    editNode: function (data, callback) {
+                        // filling in the popup DOM elements
+                        document.getElementById('operation').innerHTML = "Edit Node";
+                        document.getElementById('node-id').value = data.id;
+                        document.getElementById('node-label').value = data.label;
+                        document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
+                        document.getElementById('cancelButton').onclick = cancelEdit.bind(this, callback);
+                        document.getElementById('network-popUp').style.display = 'block';
+                    },
+                    addEdge: function (data, callback) {
+                        if (data.from == data.to) {
+                            var self_edge = confirm("Do you want to connect the node to itself?");
+                            if (self_edge) {
+                                callback(data);
+                            }
+                        } else {
+                            callback(data);
+                        }
+                        graph_data.edges.push({from : data.from ,to : data.to});
+                    }
+                },
+            };
+
+            network = new vis.Network(container, data, options);
+
+        }
+
+        function clearPopUp() {
+            document.getElementById('saveButton').onclick = null;
+            document.getElementById('cancelButton').onclick = null;
+            document.getElementById('network-popUp').style.display = 'none';
+        }
+
+        function cancelEdit(callback) {
+            clearPopUp();
+            callback(null);
+        }
+
+        function saveData(data, callback) {
+            data.id = document.getElementById('node-id').value;
+            data.label = document.getElementById('node-label').value;
+            if( nodes.indexOf( data.id ) === -1){
+                graph_data.nodes.push( {id: data.id ,label: data.label } );
+            }
+            console.log(graph_data);
+            clearPopUp();
+            callback(data);
+        }
+        
+     </script>
+    
+</html>
