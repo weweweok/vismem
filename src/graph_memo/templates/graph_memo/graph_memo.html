@@ -125,8 +125,14 @@
                             callback(data);
                         }
                         graph_data.edges.push({from : data.from ,to : data.to});
-                    }
-                },
+                    },
+                    deleteNode: function (data, callback){
+                        const graph_id = graph_data.nodes.findIndex( ({id}) => id == data.id );
+                        graph_data.nodes.splice(graph_id,1);
+                        console.log(graph_data.nodes);
+                        callback(data);
+                    },
+                }
             };
 
             network = new vis.Network(container, data, options);
