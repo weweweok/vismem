@@ -38,3 +38,7 @@ But You don't have to make now. I created. You only write "python manage.py migr
 python manage.py migrate graph_memo 0001
 ```
 you will find file "db.dbsqlite3".You can save graph_data.
+
+## vis.js
+this application use library vis-network.
+https://visjs.github.io/vis-network/docs/network/
