@@ -8,7 +8,7 @@
           type="text/javascript"
           src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
         ></script>
-        <script src="{% static 'js/graph_setting.js' %}">
+        <script src="{% static 'js/scripts.js' %}">
         </script>
             <link rel="stylesheet" href="{% static 'css/graph.css' %}">
       </head>
@@ -44,6 +44,7 @@
         const django_csrf_token = '{% csrf_token %}';
         let token = django_csrf_token.split('=');// 文字列を’＝’を基準に分離
         let csrf_token = token[3].slice(1).slice(0,-2);//'" ...  ">'が必ず与えられるから" ... "の文字列の形にする
+        const django_url = "{% url 'graph_memo:define_graph' %}";
 
         let graph_data = JSON.parse('{{data_json | safe}}');// django側から送信されたデータをjson形式に直す
 
@@ -60,7 +61,6 @@
 
         const save_to_django = document.getElementById("save_graph");//inputのtypeがボタンの属性
         save_to_django.addEventListener("click",function post_json(){
-
         var xhr = new XMLHttpRequest();
         let connecting_result = document.getElementById('ajax-connecting-result');//ステータス状況の文字を表示するために宣言
         
@@ -78,8 +78,64 @@
         
         }, false);
 
+        function draw() {
+            destroy();
+            // create a network
+            let container = document.getElementById('mynetwork');
+            let options = {
+                manipulation: {
+                    addNode: function (data, callback) {
+                        // filling in the popup DOM elements
+                        document.getElementById('operation').innerHTML = "Add Node";
+                        document.getElementById('node-id').value = data.id;
+                        document.getElementById('node-label').value = data.label;
+                        document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
+                        document.getElementById('cancelButton').onclick = clearPopUp.bind();
+                        document.getElementById('network-popUp').style.display = 'block';
+                    },
+                    editNode: function (data, callback) {
+                        // filling in the popup DOM elements
+                        document.getElementById('operation').innerHTML = "Edit Node";
+                        document.getElementById('node-id').value = data.id;
+                        document.getElementById('node-label').value = data.label;
+                        document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
+                        document.getElementById('cancelButton').onclick = cancelEdit.bind(this, callback);
+                        document.getElementById('network-popUp').style.display = 'block';
 
+                    },
+                    addEdge: function (data, callback) {
+                        if (data.from == data.to) {
+                            var self_edge = confirm("Do you want to connect the node to itself?");
+                            if (self_edge) {
+                                callback(data);
+                            }
+                        } else {
+                            callback(data);
+                        }
+                        graph_data.edges.push({from : data.from ,to : data.to});
+                    },
+                    deleteNode: function (data, callback){
+                        let nodes_id = graph_data.nodes.findIndex( ({id}) => id == data.id );
+                        graph_data.nodes.splice(nodes_id,1);
+                        let edge_from = graph_data.edges.findIndex( ({from}) => from == data.from);
+                        let edge_anoter_from = graph_data.edges.findIndex( ({from}) => from == graph_data.edges[edge_from]);
+                        if(edge_from!= -1)graph_data.edges.splice(edge_from,1);
+                        if(edge_anoter_from != -1) graph_data.edges.splice(edge_anoter_from,1);
+                        callback(data);
+                    },
+                    deleteEdge: function (data, callback){
+                        console.log(data);
+                        let edge_from = graph_data.edges.findIndex( ({from}) => from == data.from);
+                        let edge_anoter_from = graph_data.edges.findIndex( ({from}) => from == graph_data.edges[edge_from]);
+                        graph_data.edges.splice(edge_from,1);
+                        if(edge_anoter_from != -1) graph_data.edges.splice(edge_anoter_from,1);
+                        callback(data);
+                    },
+                }
+            };
 
+            network = new vis.Network(container, data, options);
+}
 
         
      </script>

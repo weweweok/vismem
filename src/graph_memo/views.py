@@ -10,31 +10,28 @@ import pprint
 
 # Create your views here.
 def define_graph(request):
-    #試作中、理想は各リストにデータベースのデータが格納されていること
-    data = {
-            'nodes':[{"id": data.node_id ,"label": data.node_text} for data in Graph_nodes.objects.all()],
-            'edges':[],
+        #試作中、理想は各リストにデータベースのデータが格納されていること
+        data = {
+            'nodes':[{"id": node.node_id ,"label": node.node_text } for node in Graph_nodes.objects.all()],
+            'edges':[{"from": edge.edge_from ,"to": edge.edge_to } for edge in Graph_edges.objects.all()],
             }
-    if request.method == 'POST':
-        print("success")
-        posted_data = json.loads(request.body)
-        print("node data: {}".format(posted_data["nodes"]))
-        print()
-        print("edges data: {}".format(posted_data["edges"]))
+        if request.method == 'POST':
+                Graph_nodes.objects.all().delete()
+                Graph_edges.objects.all().delete()
+                print("success")
+                posted_data = json.loads(request.body)
+                print("node data: {}".format(posted_data["nodes"]))
+                print()
+                print("edges data: {}".format(posted_data["edges"]))
+                for data in posted_data["nodes"]:
+                        Graph_nodes.objects.create(node_id=data["id"], node_text=data["label"])
 
-        Graph_nodes.objects.all().delete()
-        Graph_edges.objects.all().delete()
+                for data in posted_data["edges"]:
+                        Graph_edges.objects.create(edge_from=data["from"], edge_to=data["to"])
 
-        for data in posted_data["nodes"]:
-                Graph_nodes.objects.create(node_id=data["id"], node_text=data["label"])
-        print(Graph_nodes.objects.distinct().values_list("id"))
+                return render(request,"graph_memo/graph_memo.html", {'data_json': json.dumps(posted_data)})
 
-        for data in posted_data["edges"]:
-                Graph_edges.objects.create(edge_from=data["from"], edge_to=data["to"])
-
-        return render(request,"graph_memo/graph_memo.html", {'data_json': json.dumps(posted_data)})
-
-    return render(request,"graph_memo/graph_memo.html", {'data_json': json.dumps(data)})
+        return render(request,"graph_memo/graph_memo.html", {'data_json': json.dumps(data)})
 
 
 
