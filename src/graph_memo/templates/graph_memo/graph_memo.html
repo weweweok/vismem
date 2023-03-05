@@ -48,12 +48,11 @@
         let graph_data = JSON.parse('{{data_json | safe}}');// django側から送信されたデータをjson形式に直す
 
         var network = null;
-
             
         let nodes = new vis.DataSet(graph_data.nodes);
         let edges = new vis.DataSet(graph_data.edges);
 
-            // create a network
+        // create a network
         let data = {
                 nodes: nodes,
                 edges: edges
