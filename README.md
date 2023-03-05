@@ -23,9 +23,9 @@ Because not being created database for saving graph data　etc... .
 ## run server 
 Open tarminal and write "python manage.py runserver" On vismem/src after clone this repository. 
 
-'''
+```
 python manage.py runserver
-'''
+```
 
 URL: http://127.0.0.1:8000/graph_memo/
 
