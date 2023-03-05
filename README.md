@@ -32,4 +32,9 @@ URL: http://127.0.0.1:8000/graph_memo/
 you can create graph and post to server.(check your opening tarminal)
 
 ## create data base
-You have to create data base by yourself to save graph data.
+On usually munipulating data base,You have to make migration file.
+But You don't have to make now. I created. You only write "py manage.py migrate graph_memo 0001" in tarminal.
+```
+py manage.py migrate graph_memo 0001
+```
+you will find file "db.dbsqlite3".You can save graph_data.
