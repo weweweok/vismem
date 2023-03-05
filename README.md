@@ -30,3 +30,6 @@ python manage.py runserver
 URL: http://127.0.0.1:8000/graph_memo/
 
 you can create graph and post to server.(check your opening tarminal)
+
+## create data base
+You have to create data base by yourself to save graph data.
