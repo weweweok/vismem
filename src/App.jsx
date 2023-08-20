@@ -18,8 +18,6 @@ function App() {
   const events = {
     select: function (event) {
       const { nodes, edges } = event;
-      const nodesIndex = nodes[0];
-      graph.nodes[nodesIndex - 1].label = "accessed!!";
     },
   };
 
@@ -37,7 +35,15 @@ function App() {
         document.getElementById("operation").innerHTML = "Add Node";
         document.getElementById("node-id").value = nodeData.id;
         document.getElementById("node-label").value = nodeData.label;
-        callback(nodeData);
+        document.getElementById("saveButton").onclick = saveData.bind(
+          this,
+          nodeData,
+          callback
+        );
+        document.getElementById("cancelButton").onclick = clearPopUp.bind(
+          this,
+          callback
+        );
         document.getElementById("network-popUp").style.display = "block";
       },
       addEdge: function (edgeData, callback) {
@@ -45,10 +51,33 @@ function App() {
         console.log(edges);
         callback(edgeData);
       },
+      editNode: function (nodeData, callback) {
+        document.getElementById("operation").innerHTML = "Add Node";
+        document.getElementById("node-id").value = nodeData.id;
+        document.getElementById("node-label").value = nodeData.label;
+        document.getElementById("saveButton").onclick = saveData.bind(
+          this,
+          nodeData,
+          callback
+        );
+        document.getElementById("cancelButton").onclick = clearPopUp.bind(
+          this,
+          callback
+        );
+        document.getElementById("network-popUp").style.display = "block";
+      },
     },
   };
-  const clearPopUp = () => {
+  const clearPopUp = (callback) => {
     document.getElementById("network-popUp").style.display = "none";
+    callback(null);
+  };
+
+  const saveData = (data, callback) => {
+    data.id = document.getElementById("node-id").value;
+    data.label = document.getElementById("node-label").value;
+    clearPopUp();
+    callback(data);
   };
 
   return (
@@ -77,8 +106,8 @@ function App() {
               </td>
             </tr>
           </table>
-          <input type="button" value="save" />
-          <input type="button" value="cancel" onClick={clearPopUp} />
+          <input type="button" value="save" id="saveButton" />
+          <input type="button" value="cancel" id="cancelButton" />
         </div>
         <body>
           <Graph
