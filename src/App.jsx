@@ -26,7 +26,7 @@ function App() {
   const graph = { nodes: nodes, edges: edges };
   const options = {
     layout: {
-      hierarchical: true,
+      hierarchical: false,
     },
     edges: {
       color: "#000000",
@@ -39,6 +39,11 @@ function App() {
         document.getElementById("node-label").value = nodeData.label;
         callback(nodeData);
         document.getElementById("network-popUp").style.display = "block";
+      },
+      addEdge: function (edgeData, callback) {
+        edges.push({ from: edgeData.from, to: edgeData.to });
+        console.log(edges);
+        callback(edgeData);
       },
     },
   };
