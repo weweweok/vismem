@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Graph from "react-vis-network-graph";
 
 function App() {
@@ -22,6 +22,7 @@ function App() {
   };
 
   const graph = { nodes: nodes, edges: edges };
+
   const options = {
     layout: {
       hierarchical: false,
@@ -40,7 +41,7 @@ function App() {
           nodeData,
           callback
         );
-        document.getElementById("cancelButton").onclick = clearPopUp.bind(
+        document.getElementById("cancelButton").onclick = cancelEdit.bind(
           this,
           callback
         );
@@ -60,7 +61,7 @@ function App() {
           nodeData,
           callback
         );
-        document.getElementById("cancelButton").onclick = clearPopUp.bind(
+        document.getElementById("cancelButton").onclick = cancelEdit.bind(
           this,
           callback
         );
@@ -68,8 +69,9 @@ function App() {
       },
     },
   };
-  const clearPopUp = (callback) => {
-    document.getElementById("network-popUp").style.display = "none";
+
+  const cancelEdit = (callback) => {
+    clearPopUp();
     callback(null);
   };
 
@@ -91,7 +93,6 @@ function App() {
         <div id="network-popUp" style={{ display: "none" }}>
           <span id="operation">node</span>
           <br />
-
           <table>
             <tr>
               <td>id</td>
@@ -123,5 +124,11 @@ function App() {
     </>
   );
 }
+
+const clearPopUp = () => {
+  document.getElementById("saveButton").onclick = null;
+  document.getElementById("cancelButton").onclick = null;
+  document.getElementById("network-popUp").style.display = "none";
+};
 
 export default App;
