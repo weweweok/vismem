@@ -49,7 +49,6 @@ function App() {
       },
       addEdge: function (edgeData, callback) {
         edges.push({ from: edgeData.from, to: edgeData.to });
-        console.log(edges);
         callback(edgeData);
       },
       editNode: function (nodeData, callback) {
@@ -78,6 +77,17 @@ function App() {
   const saveData = (data, callback) => {
     data.id = document.getElementById("node-id").value;
     data.label = document.getElementById("node-label").value;
+    const idArray = nodes.map((nodesData) => nodesData.id);
+    const idIndex = idArray.indexOf(data.id);
+    console.log(nodes);
+    console.log("id:", idIndex);
+    if (idIndex === -1) {
+      nodes.push({ id: data.id, label: data.label });
+    } else {
+      nodes[idIndex].label = data.label;
+      console.log(nodes);
+    }
+
     clearPopUp();
     callback(data);
   };
