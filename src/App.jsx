@@ -39,6 +39,7 @@ function App() {
         document.getElementById("saveButton").onclick = saveData.bind(
           this,
           nodeData,
+          nodes,
           callback
         );
         document.getElementById("cancelButton").onclick = cancelEdit.bind(
@@ -58,6 +59,7 @@ function App() {
         document.getElementById("saveButton").onclick = saveData.bind(
           this,
           nodeData,
+          nodes,
           callback
         );
         document.getElementById("cancelButton").onclick = cancelEdit.bind(
@@ -67,29 +69,6 @@ function App() {
         document.getElementById("network-popUp").style.display = "block";
       },
     },
-  };
-
-  const cancelEdit = (callback) => {
-    clearPopUp();
-    callback(null);
-  };
-
-  const saveData = (data, callback) => {
-    data.id = document.getElementById("node-id").value;
-    data.label = document.getElementById("node-label").value;
-    const idArray = nodes.map((nodesData) => nodesData.id);
-    const idIndex = idArray.indexOf(data.id);
-    console.log(nodes);
-    console.log("id:", idIndex);
-    if (idIndex === -1) {
-      nodes.push({ id: data.id, label: data.label });
-    } else {
-      nodes[idIndex].label = data.label;
-      console.log(nodes);
-    }
-
-    clearPopUp();
-    callback(data);
   };
 
   return (
@@ -139,6 +118,29 @@ const clearPopUp = () => {
   document.getElementById("saveButton").onclick = null;
   document.getElementById("cancelButton").onclick = null;
   document.getElementById("network-popUp").style.display = "none";
+};
+
+const cancelEdit = (callback) => {
+  clearPopUp();
+  callback(null);
+};
+
+const saveData = (data, nodes, callback) => {
+  data.id = document.getElementById("node-id").value;
+  data.label = document.getElementById("node-label").value;
+  const idArray = nodes.map((nodesData) => nodesData.id);
+  const idIndex = idArray.indexOf(data.id);
+  console.log(nodes);
+  console.log("id:", idIndex);
+  if (idIndex === -1) {
+    nodes.push({ id: data.id, label: data.label });
+  } else {
+    nodes[idIndex].label = data.label;
+    console.log(nodes);
+  }
+
+  clearPopUp();
+  callback(data);
 };
 
 export default App;
