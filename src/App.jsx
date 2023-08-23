@@ -39,7 +39,7 @@ function App() {
         document.getElementById("saveButton").onclick = saveData.bind(
           this,
           nodeData,
-          nodes,
+          graph,
           callback
         );
         document.getElementById("cancelButton").onclick = cancelEdit.bind(
@@ -49,7 +49,12 @@ function App() {
         document.getElementById("network-popUp").style.display = "block";
       },
       addEdge: function (edgeData, callback) {
-        edges.push({ from: edgeData.from, to: edgeData.to });
+        graph.edges.push({
+          from: edgeData.from,
+          to: edgeData.to,
+          id: createUuid(),
+        });
+        console.log(edges);
         callback(edgeData);
       },
       editNode: function (nodeData, callback) {
@@ -59,7 +64,7 @@ function App() {
         document.getElementById("saveButton").onclick = saveData.bind(
           this,
           nodeData,
-          nodes,
+          graph,
           callback
         );
         document.getElementById("cancelButton").onclick = cancelEdit.bind(
@@ -67,6 +72,18 @@ function App() {
           callback
         );
         document.getElementById("network-popUp").style.display = "block";
+      },
+      deleteNode: function (nodeEdgeData, callback) {
+        const idArray = graph.nodes.map((nodesData) => nodesData.id);
+        const idIndex = idArray.indexOf(nodeEdgeData.nodes[0]);
+
+        graph.nodes.splice(idIndex, 1);
+
+        const edgeidArray = graph.edges.map((edgesData) => edgesData.id);
+        const edgeidIndex = edgeidArray.indexOf(nodeEdgeData.edges[0]);
+        graph.edges.splice(edgeidIndex, 1);
+
+        console.log(graph.edges);
       },
     },
   };
@@ -125,22 +142,30 @@ const cancelEdit = (callback) => {
   callback(null);
 };
 
-const saveData = (data, nodes, callback) => {
+const saveData = (data, graph, callback) => {
   data.id = document.getElementById("node-id").value;
   data.label = document.getElementById("node-label").value;
-  const idArray = nodes.map((nodesData) => nodesData.id);
+  const idArray = graph.nodes.map((nodesData) => nodesData.id);
   const idIndex = idArray.indexOf(data.id);
-  console.log(nodes);
+  console.log(graph.nodes);
   console.log("id:", idIndex);
   if (idIndex === -1) {
-    nodes.push({ id: data.id, label: data.label });
+    graph.nodes.push({ id: data.id, label: data.label });
   } else {
-    nodes[idIndex].label = data.label;
-    console.log(nodes);
+    graph.nodes[idIndex].label = data.label;
+    console.log(graph.nodes);
   }
 
   clearPopUp();
   callback(data);
+};
+
+const createUuid = () => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (a) {
+    let r = (new Date().getTime() + Math.random() * 16) % 16 | 0,
+      v = a == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 };
 
 export default App;
