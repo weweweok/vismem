@@ -80,10 +80,30 @@ function App() {
         graph.nodes.splice(idIndex, 1);
 
         const edgeidArray = graph.edges.map((edgesData) => edgesData.id);
-        const edgeidIndex = edgeidArray.indexOf(nodeEdgeData.edges[0]);
+        console.log(graph);
+        const edgeCount = nodeEdgeData.edges.length;
+        console.log(nodeEdgeData.edges);
+        console.log(edgeCount);
+        for (
+          let nodeEdgeDataIndex = 0;
+          nodeEdgeDataIndex <= edgeCount;
+          nodeEdgeDataIndex++
+        ) {
+          const edgeidIndex = edgeidArray.indexOf(
+            nodeEdgeData.edges[nodeEdgeDataIndex]
+          );
+          graph.edges.splice(edgeidIndex, 1);
+        }
+
+        console.log(graph);
+        callback(nodeEdgeData);
+      },
+      deleteEdge: function (edgeData, callback) {
+        const edgeidArray = graph.edges.map((edgesData) => edgesData.id);
+        const edgeidIndex = edgeidArray.indexOf(edgeData.edges[0]);
         graph.edges.splice(edgeidIndex, 1);
 
-        console.log(graph.edges);
+        callback(edgeData);
       },
     },
   };
